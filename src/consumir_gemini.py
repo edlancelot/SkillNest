@@ -57,6 +57,11 @@ def obtener_dato_de_prueba(pregunta):
 
     return extraer_datos(datos)
 
+try:
+    print(obtener_dato_de_prueba("Confirma el estado de la conexión en 10 palabra."))
+except (ValueError, RuntimeError) as error:
+    print(f"No se pudo completar la operación: {error}")
+
 # def obtener_dato_de_prueba(pregunta):
 #     try:
 #         api_key=os.getenv("GEMINI_API_KEY")
@@ -82,7 +87,3 @@ def obtener_dato_de_prueba(pregunta):
 #         return "Respuesta:" + datos["candidates"][0]["content"]["parts"][0]["text"]
 #     except Exception as e:
 #         return print(f"Ocurrio un error: {e}")
-try:
-    print(obtener_dato_de_prueba("Confirma el estado de la conexión en 10 palabra."))
-except (ValueError, RuntimeError) as error:
-    print(f"No se pudo completar la operación: {error}")
