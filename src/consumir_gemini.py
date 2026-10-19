@@ -27,7 +27,7 @@ def armar_peticion(pregunta):
 
     return url,body
 
-#Función envia la petición
+#def enviar_peticion(url: str, body: dic )
 def enviar_peticion(url, body):
     try:
         respuesta = requests.post(url, json=body, timeout=30)
@@ -44,7 +44,7 @@ def enviar_peticion(url, body):
     except requests.exceptions.JSONDecodeError:
         raise RuntimeError("La respuesta del servicio no llegó en el formato esperado.")
 
-#Función para extraer los datos
+#def extraer_datos(datos: dic)
 def extraer_datos(datos):
     try:
         return "Respuesta:" + datos["candidates"][0]["content"]["parts"][0]["text"]
@@ -54,11 +54,43 @@ def extraer_datos(datos):
 def obtener_dato_de_prueba(pregunta):
     url, body= armar_peticion(pregunta)
     datos = enviar_peticion(url, body)
-
+    costo = calcular_costo(datos, 0.00000075, 0.00000375)
+    print(f"Costo de la petición: ${costo:.6f} USD")
     return extraer_datos(datos)
 
+#def calcular_costo(datos: dic, precio_entrada float, precio_salida: float) ->float
+def calcular_costo(datos, precio_entrada, precio_salida):
+    #datos ={dict... usageMetadata}
+    try:
+        uso = datos["usageMetadata"]
+
+        # uso = {
+        #     "promptTokenCount": 12,
+        #     "candidatesTokenCount": 682,
+        #     "totalTokenCount": 1583,
+        #     "promptTokensDetails": [
+        #         {
+        #             "modality": "TEXT",
+        #             "tokenCount": 12
+        #         }
+        #     ],
+        #     "thoughtsTokenCount": 889,
+        #     "serviceTier": "standard"
+        # }
+
+        tokens_entrada = uso["promptTokenCount"]
+        tokens_salida = uso["candidatesTokenCount"]
+        tokens_razonamiento = uso["thoughtsTokenCount"] #revisar si existe o no, si no existe colocarlo en 0
+
+        costo = (tokens_entrada * precio_entrada) + ( 
+            (tokens_salida + tokens_razonamiento) * precio_salida )
+
+        return costo
+    except KeyError:
+        raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
+
 try:
-    print(obtener_dato_de_prueba("Confirma el estado de la conexión en 10 palabra."))
+    print(obtener_dato_de_prueba("Cual es el mejor lenguaje de programación asociado a el analisis de estrellas de los diferentes universos."))
 except (ValueError, RuntimeError) as error:
     print(f"No se pudo completar la operación: {error}")
 
