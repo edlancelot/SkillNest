@@ -2,6 +2,8 @@ import os
 import requests
 from dotenv import load_dotenv
 
+import time
+
 load_dotenv()
 
 MODELO="gemini-3.6-flash"
@@ -13,6 +15,25 @@ def armar_peticion(pregunta):
     if not pregunta:
         raise ValueError(f"La pregunta no puede estar vacia.") 
     url= f"{URL_BASE}{MODELO}:generateContent?key={API_KEY}"
+    body={
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": pregunta
+                    }
+                ]
+            }
+        ]
+    }
+
+    return url,body
+
+#Función para crear la solicitud
+def armar_peticion_evaluacion(pregunta, modelo):
+    if not pregunta:
+        raise ValueError(f"La pregunta no puede estar vacia.") 
+    url= f"{URL_BASE}{modelo}:generateContent?key={API_KEY}"
     body={
         "contents": [
             {
@@ -40,7 +61,7 @@ def enviar_peticion(url, body):
         raise RuntimeError(f"Error en la petición, Status Code: {respuesta.status_code}")
     
     try:
-        return respuesta.json()
+        return respuesta.json(), respuesta.elapsed.total_seconds()
     except requests.exceptions.JSONDecodeError:
         raise RuntimeError("La respuesta del servicio no llegó en el formato esperado.")
 
@@ -53,8 +74,17 @@ def extraer_datos(datos):
 
 def obtener_dato_de_prueba(pregunta):
     url, body= armar_peticion(pregunta)
-    datos = enviar_peticion(url, body)
+
+    inicio = time.perf_counter() #Empezar el contador
+
+    datos, seg = enviar_peticion(url, body)
+
+    fin = time.perf_counter() #Termina el contador
+    latencia = fin - inicio
+
     costo = calcular_costo(datos, 0.00000075, 0.00000375)
+    print(f"Latencia Time: {latencia:.2f} segundos")
+    print(f"Latencia Requests: {seg:.3f} segundos")
     print(f"Costo de la petición: ${costo:.6f} USD")
     return extraer_datos(datos)
 
@@ -80,7 +110,7 @@ def calcular_costo(datos, precio_entrada, precio_salida):
 
         tokens_entrada = uso["promptTokenCount"]
         tokens_salida = uso["candidatesTokenCount"]
-        tokens_razonamiento = uso["thoughtsTokenCount"] #revisar si existe o no, si no existe colocarlo en 0
+        tokens_razonamiento = uso.get("thoughtsTokenCount", 0)
 
         costo = (tokens_entrada * precio_entrada) + ( 
             (tokens_salida + tokens_razonamiento) * precio_salida )
@@ -89,10 +119,12 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     except KeyError:
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
 
-try:
-    print(obtener_dato_de_prueba("Cual es el mejor lenguaje de programación asociado a el analisis de estrellas de los diferentes universos."))
-except (ValueError, RuntimeError) as error:
-    print(f"No se pudo completar la operación: {error}")
+
+if __name__ == "__main__":
+    try:
+        print(obtener_dato_de_prueba("Dime ¡Hola Mundo!"))
+    except (ValueError, RuntimeError) as error:
+        print(f"No se pudo completar la operación: {error}")
 
 # def obtener_dato_de_prueba(pregunta):
 #     try:
