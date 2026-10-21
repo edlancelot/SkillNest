@@ -1,6 +1,6 @@
 # Decisión de arquitectura: elección de modelo
 
-Fecha de la comparación: Martes 20 de Octubre del 2026
+Fecha de la comparación: Martes 21 de Octubre del 2026
 Nombre de la miniaplicación: "mi miniaplicación"
 
 ## Modelo elegido

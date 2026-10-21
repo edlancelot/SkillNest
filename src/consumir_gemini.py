@@ -6,7 +6,7 @@ import time
 
 load_dotenv()
 
-MODELO="gemini-3.6-flash"
+MODELO="gemini-3.8-flash"
 URL_BASE="https://generativelanguage.googleapis.com/v1beta/models/"
 API_KEY=os.getenv("GEMINI_API_KEY")
 
@@ -30,11 +30,18 @@ def armar_peticion(pregunta):
     return url,body
 
 #Función para crear la solicitud
-def armar_peticion_evaluacion(pregunta, modelo):
+def armar_peticion_evaluacion(pregunta, modelo, system_instructions):
     if not pregunta:
         raise ValueError(f"La pregunta no puede estar vacia.") 
     url= f"{URL_BASE}{modelo}:generateContent?key={API_KEY}"
     body={
+        "systemInstruction":{
+            "parts": [
+                {
+                    "text": system_instructions
+                }
+            ]
+        },
         "contents": [
             {
                 "parts": [
@@ -73,7 +80,9 @@ def extraer_datos(datos):
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
 
 def obtener_dato_de_prueba(pregunta):
-    url, body= armar_peticion(pregunta)
+    system_instructions="Eres un asistente agresivo y respondes en máximo 2 oraciones."
+    # url, body= armar_peticion(pregunta,"gemini-3.6-flash",system_instructions)
+    url, body= armar_peticion_evaluacion(pregunta,"gemini-3.8-flash",system_instructions)
 
     inicio = time.perf_counter() #Empezar el contador
 
@@ -120,11 +129,10 @@ def calcular_costo(datos, precio_entrada, precio_salida):
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
 
 
-if __name__ == "__main__":
-    try:
-        print(obtener_dato_de_prueba("Dime ¡Hola Mundo!"))
-    except (ValueError, RuntimeError) as error:
-        print(f"No se pudo completar la operación: {error}")
+try:
+    print(obtener_dato_de_prueba("Confirma la conexion"))
+except (ValueError, RuntimeError) as error:
+    print(f"No se pudo completar la operación: {error}")
 
 # def obtener_dato_de_prueba(pregunta):
 #     try:
