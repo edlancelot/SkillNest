@@ -1,12 +1,14 @@
 import os
 import requests
 from dotenv import load_dotenv
+import re
+import json
 
 import time
 
 load_dotenv()
 
-MODELO="gemini-3.8-flash"
+MODELO="gemini-3.5-flash-lite"
 URL_BASE="https://generativelanguage.googleapis.com/v1beta/models/"
 API_KEY=os.getenv("GEMINI_API_KEY")
 
@@ -29,8 +31,8 @@ def armar_peticion(pregunta):
 
     return url,body
 
-#Función para crear la solicitud
-def armar_peticion_evaluacion(pregunta, modelo, system_instructions):
+#def armar_peticion_evaluacion(pregunta: str, modelo: str, system_instructions: str, response_schema: dic )
+def armar_peticion_evaluacion(pregunta, modelo, system_instructions,response_schema=None):
     if not pregunta:
         raise ValueError(f"La pregunta no puede estar vacia.") 
     url= f"{URL_BASE}{modelo}:generateContent?key={API_KEY}"
@@ -51,7 +53,17 @@ def armar_peticion_evaluacion(pregunta, modelo, system_instructions):
                 ]
             }
         ]
+        # "generationConfig": {
+        #     "responseMimeType": "application/json",
+        #     "responseSchema": response_schema
+        # }
     }
+
+    if response_schema is not None:
+        body["generationConfig"] ={
+            "responseMimeType": "application/json",
+            "responseSchema": response_schema
+        }
 
     return url,body
 
@@ -68,21 +80,31 @@ def enviar_peticion(url, body):
         raise RuntimeError(f"Error en la petición, Status Code: {respuesta.status_code}")
     
     try:
-        return respuesta.json(), respuesta.elapsed.total_seconds()
+        return respuesta.json()
     except requests.exceptions.JSONDecodeError:
         raise RuntimeError("La respuesta del servicio no llegó en el formato esperado.")
 
 #def extraer_datos(datos: dic)
 def extraer_datos(datos):
     try:
-        return "Respuesta:" + datos["candidates"][0]["content"]["parts"][0]["text"]
+        return datos["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError):
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
 
 def obtener_dato_de_prueba(pregunta):
-    system_instructions="Eres un asistente agresivo y respondes en máximo 2 oraciones."
-    # url, body= armar_peticion(pregunta,"gemini-3.6-flash",system_instructions)
-    url, body= armar_peticion_evaluacion(pregunta,"gemini-3.8-flash",system_instructions)
+
+    response_schema = {
+        "type": "OBJECT",
+        "properties": {
+            "categoria": {"type": "STRING"},
+            "confianza": {"type": "NUMBER"} 
+        },
+        "required": ["categoria","confianza"] #obligatorios
+    }
+
+    system_instructions="Eres un asistente agresivo y respondes en máximo 2 oraciones, tambien responde con un objeto de JSON con claves: 'categoria' y 'confianza'"
+    # url, body= armar_peticion(pregunta,"gemini-3.5-flash-lite",system_instructions)
+    url, body= armar_peticion_evaluacion(pregunta,"gemini-3.5-flash-lite",system_instructions, response_schema)
 
     inicio = time.perf_counter() #Empezar el contador
 
@@ -92,10 +114,14 @@ def obtener_dato_de_prueba(pregunta):
     latencia = fin - inicio
 
     costo = calcular_costo(datos, 0.00000075, 0.00000375)
-    print(f"Latencia Time: {latencia:.2f} segundos")
-    print(f"Latencia Requests: {seg:.3f} segundos")
-    print(f"Costo de la petición: ${costo:.6f} USD")
-    return extraer_datos(datos)
+    # print(f"Latencia Time: {latencia:.2f} segundos")
+    # print(f"Latencia Requests: {seg:.3f} segundos")
+    # print(f"Costo de la petición: ${costo:.6f} USD")
+
+    texto = extraer_datos(datos)
+    datos_formateados = parsear_respuesta_json(texto, ["categoria","confianza"])
+    return datos_formateados
+    # return extraer_datos(datos)
 
 #def calcular_costo(datos: dic, precio_entrada float, precio_salida: float) ->float
 def calcular_costo(datos, precio_entrada, precio_salida):
@@ -128,11 +154,31 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     except KeyError:
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
 
+def parsear_respuesta_json(texto, claves_requeridas = None):
+    """
+    claves_requeridas = ["categoria","confianza"]
+    """
+    texto_limpio = texto.strip() #Quitar espacios
+    texto_limpio = re.sub(r"^```(?:json)?\s*", "", texto_limpio) 
+    texto_limpio = re.sub(r"\s*```$", "", texto_limpio)
+    print(texto_limpio)
+    try:
+        datos = json.loads(texto_limpio)
+    except json.JSONDecodeError:
+        raise ValueError("La respuesta del modelo no es JSON válido.")
 
-try:
-    print(obtener_dato_de_prueba("Confirma la conexion"))
-except (ValueError, RuntimeError) as error:
-    print(f"No se pudo completar la operación: {error}")
+    if claves_requeridas:
+        faltantes = [clave for clave in claves_requeridas if clave not in datos]
+        if faltantes:
+            raise ValueError("La respuesta no tiene la estructura esperada.")
+
+    return datos
+
+if __name__ == "__main__":
+    try:
+        print(obtener_dato_de_prueba("Confirma la conexion"))
+    except (ValueError, RuntimeError) as error:
+        print(f"No se pudo completar la operación: {error}")
 
 # def obtener_dato_de_prueba(pregunta):
 #     try:

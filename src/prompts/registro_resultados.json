@@ -1,0 +1,14 @@
+{
+  "clasificar_carga": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "validar_capacidad_camion": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "asignar_anden": {
+    "exitos": 3,
+    "intentos": 3
+  }
+}
