@@ -12,7 +12,7 @@ MODELO="gemini-3.5-flash-lite"
 URL_BASE="https://generativelanguage.googleapis.com/v1beta/models/"
 API_KEY=os.getenv("GEMINI_API_KEY")
 
-#Función para crear la solicitud
+#Función armar_peticion(pregunta: str)
 def armar_peticion(pregunta):
     if not pregunta:
         raise ValueError(f"La pregunta no puede estar vacia.") 
@@ -53,10 +53,6 @@ def armar_peticion_evaluacion(pregunta, modelo, system_instructions,response_sch
                 ]
             }
         ]
-        # "generationConfig": {
-        #     "responseMimeType": "application/json",
-        #     "responseSchema": response_schema
-        # }
     }
 
     if response_schema is not None:
@@ -75,6 +71,16 @@ def enviar_peticion(url, body):
         raise RuntimeError("No se puede conectar con el servicio. Intenta de nuevo en unos momentos.")
     except requests.exceptions.Timeout:
         raise RuntimeError("Se agoto el tiempo. Intenta de nuevo en unos momentos.")
+
+
+    if respuesta.status_code in(401, 403):
+        raise ValueError("Credencial invalida o sin permiso. Revisa tu GEMINI_API_KEY.")
+    if respuesta.status_code >= 500:
+        raise TimeoutError("El proveedor no pudo procesar la peticion. Hay que esperar y reintentar.")
+    if respuesta.status_code == 429:
+        segundos = respuesta.headers.get("Retry-After")
+        mensaje = f"Límite excedido. Reintente en {segundos}s." if segundos else "Límite excedido."
+        raise TimeoutError(mensaje)
 
     if respuesta.status_code != 200:
         raise RuntimeError(f"Error en la petición, Status Code: {respuesta.status_code}")
@@ -108,15 +114,15 @@ def obtener_dato_de_prueba(pregunta):
 
     inicio = time.perf_counter() #Empezar el contador
 
-    datos, seg = enviar_peticion(url, body)
+    datos = enviar_peticion(url, body)
 
     fin = time.perf_counter() #Termina el contador
     latencia = fin - inicio
 
     costo = calcular_costo(datos, 0.00000075, 0.00000375)
-    # print(f"Latencia Time: {latencia:.2f} segundos")
+    print(f"Latencia Time: {latencia:.2f} segundos")
     # print(f"Latencia Requests: {seg:.3f} segundos")
-    # print(f"Costo de la petición: ${costo:.6f} USD")
+    print(f"Costo de la petición: ${costo:.6f} USD")
 
     texto = extraer_datos(datos)
     datos_formateados = parsear_respuesta_json(texto, ["categoria","confianza"])
@@ -128,20 +134,6 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     #datos ={dict... usageMetadata}
     try:
         uso = datos["usageMetadata"]
-
-        # uso = {
-        #     "promptTokenCount": 12,
-        #     "candidatesTokenCount": 682,
-        #     "totalTokenCount": 1583,
-        #     "promptTokensDetails": [
-        #         {
-        #             "modality": "TEXT",
-        #             "tokenCount": 12
-        #         }
-        #     ],
-        #     "thoughtsTokenCount": 889,
-        #     "serviceTier": "standard"
-        # }
 
         tokens_entrada = uso["promptTokenCount"]
         tokens_salida = uso["candidatesTokenCount"]
@@ -176,32 +168,7 @@ def parsear_respuesta_json(texto, claves_requeridas = None):
 
 if __name__ == "__main__":
     try:
-        print(obtener_dato_de_prueba("Confirma la conexion"))
-    except (ValueError, RuntimeError) as error:
+        for i in range(15):
+            print(obtener_dato_de_prueba("Confirma la conexion"))
+    except (ValueError, RuntimeError, TimeoutError) as error:
         print(f"No se pudo completar la operación: {error}")
-
-# def obtener_dato_de_prueba(pregunta):
-#     try:
-#         api_key=os.getenv("GEMINI_API_KEY")
-#         modelo = "gemini-flash-latest"
-
-#         url= f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={api_key}"
-
-#         body={
-#             "contents": [
-#                 {
-#                     "parts": [
-#                         {
-#                             "text": pregunta
-#                         }
-#                     ]
-#                 }
-#             ]
-#         }
-
-#         respuesta=requests.post(url,json=body)
-#         datos= respuesta.json()
-
-#         return "Respuesta:" + datos["candidates"][0]["content"]["parts"][0]["text"]
-#     except Exception as e:
-#         return print(f"Ocurrio un error: {e}")
