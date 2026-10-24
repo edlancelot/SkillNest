@@ -166,3 +166,4 @@ Estos pasos se completan de forma progresiva a lo largo de la Unidad U1.2, no to
 | Fecha | Encontrado | Corregido | Resultado tras la corrección |
 |---|---|---|---|
 | 23/10/2026 | Observación de un compañero: en su equipo el entorno virtual se creó como `.venv` (con punto), por lo que `venv\Scripts\Activate.ps1` no le funcionó. | Pendiente: solo se deja como observación. El comando `python -m venv venv` crea la carpeta `venv` (sin punto); si tu entorno quedó como `.venv`, usa `.venv\Scripts\Activate.ps1`. | Sin cambios en los pasos de instalación. |
+
