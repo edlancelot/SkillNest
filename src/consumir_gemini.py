@@ -96,7 +96,8 @@ def extraer_datos(datos):
         return datos["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError):
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
-
+    
+#def obtener_dato_de_prueba(datos: str)
 def obtener_dato_de_prueba(pregunta):
 
     response_schema = {
@@ -146,6 +147,7 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     except KeyError:
         raise RuntimeError("La respuesta no recibe el texto generado en el lugar definido.")
 
+#def parsear_respuesta_json(texto: str, claves_requeridas: array) ->float
 def parsear_respuesta_json(texto, claves_requeridas = None):
     """
     claves_requeridas = ["categoria","confianza"]
@@ -168,7 +170,7 @@ def parsear_respuesta_json(texto, claves_requeridas = None):
 
 if __name__ == "__main__":
     try:
-        for i in range(15):
+        for i in range(5):
             print(obtener_dato_de_prueba("Confirma la conexion"))
     except (ValueError, RuntimeError, TimeoutError) as error:
         print(f"No se pudo completar la operación: {error}")

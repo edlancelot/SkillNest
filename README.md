@@ -64,11 +64,24 @@ Estos pasos se completan de forma progresiva a lo largo de la Unidad U1.2, no to
 
    Sabrás que quedó activo cuando veas `(venv)` al inicio de la línea de tu terminal.
 
-3. Instala las dependencias del proyecto para poder usarlas en la aplicación:
+3. Con el entorno virtual activo, instala las dependencias del proyecto (listadas en `requirements.txt`) para poder usarlas en la aplicación:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+   - **Windows (PowerShell, CMD o Git Bash):**
+     ```powershell
+     pip install -r requirements.txt
+     ```
+
+   - **macOS / Linux (Terminal, zsh o bash):**
+     ```bash
+     pip3 install -r requirements.txt
+     ```
+
+   > Dentro del entorno virtual activo, `pip` también funciona en macOS y Linux. Si en cualquier sistema el comando no se reconoce, usa:
+   > `python -m pip install -r requirements.txt`
+   >
+   > En macOS, si `python3` no se reconoce, instala Python desde [python.org](https://www.python.org/downloads/) o con Homebrew (`brew install python`).
+
+   Para comprobar que se instalaron, ejecuta `pip list`: deberían aparecer, entre otras, `requests` y `python-dotenv`.
 
 4. Copia `.env.example` a un archivo nuevo llamado `.env`. Usa el comando de tu terminal:
 
@@ -152,4 +165,4 @@ Estos pasos se completan de forma progresiva a lo largo de la Unidad U1.2, no to
 
 | Fecha | Encontrado | Corregido | Resultado tras la corrección |
 |---|---|---|---|
-| 22/10/2026 | En el README.md, no aparece el link del repositorio. | Se puso el link correcto del repositorio. | El repositorio se clonó de forma satisfactoria. |
+| 23/10/2026 | Observación de un compañero: en su equipo el entorno virtual se creó como `.venv` (con punto), por lo que `venv\Scripts\Activate.ps1` no le funcionó. | Pendiente: solo se deja como observación. El comando `python -m venv venv` crea la carpeta `venv` (sin punto); si tu entorno quedó como `.venv`, usa `.venv\Scripts\Activate.ps1`. | Sin cambios en los pasos de instalación. |
