@@ -37,7 +37,7 @@ def registrar_costo(respuesta: dict) -> float:
  
  
 def consultar_modelo(pregunta: str, system_instruction: str = "") -> str:
-	url, cuerpo = armar_peticion_evaluacion(pregunta,"gemini-3.8-flash", system_instruction)
+	url, cuerpo = armar_peticion_evaluacion(pregunta,"gemini-3.5-flash", system_instruction)
 	try:
 		respuesta = con_reintento(lambda: enviar_peticion(url, cuerpo))
 	except TimeoutError:
