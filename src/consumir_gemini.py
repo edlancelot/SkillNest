@@ -3,12 +3,11 @@ import requests
 from dotenv import load_dotenv
 import re
 import json
-
 import time
 
 load_dotenv()
 
-MODELO="gemini-3.5-flash-lite"
+MODELO="gemini-3.1-flash-lite"
 URL_BASE="https://generativelanguage.googleapis.com/v1beta/models/"
 API_KEY=os.getenv("GEMINI_API_KEY")
 
@@ -109,9 +108,17 @@ def obtener_dato_de_prueba(pregunta):
         "required": ["categoria","confianza"] #obligatorios
     }
 
-    system_instructions="Eres un asistente agresivo y respondes en máximo 2 oraciones, tambien responde con un objeto de JSON con claves: 'categoria' y 'confianza'"
+    system_instructions="Eres un especialista en logística y optimización de carga de camiones. Tu tarea es calcular la cantidad máxima de pallets que caben dentro de una rampla, " \
+    "considerando sus dimensiones interiores, las dimensiones de los pallets y las restricciones físicas de carga. Todas las medidas deben manejarse en milímetros. " \
+    "Rampla: largo 15685 mm, ancho 2507 mm y alto 2599 mm. Cada pallet tiene una base de 1400 mm de largo por 1200 mm de ancho y contiene un producto de 2494 mm de alto." \
+    "No asumas que la altura del producto incluye el pallet: si no se conoce la altura del pallet, solicita ese dato antes de calcular la capacidad vertical. " \
+    "Evalúa las posibles orientaciones de los pallets en el piso de la rampla, respetando sus dimensiones y sin permitir superposiciones, salientes ni ubicaciones " \
+    "físicamente imposibles. Considera la altura total del producto más el pallet para verificar que la carga quepa bajo el techo. No permitas apilar pallets salvo " \
+    "que el usuario lo autorice expresamente. Entrega la cantidad máxima estimada de pallets, la distribución propuesta a lo largo y ancho de la rampla, los cálculos " \
+    "utilizados y las restricciones detectadas. Distingue entre una estimación geométrica y una distribución físicamente validada. No inventes datos faltantes; " \
+    "solicita aclaraciones cuando sean necesarias."
     # url, body= armar_peticion(pregunta,"gemini-3.5-flash-lite",system_instructions)
-    url, body= armar_peticion_evaluacion(pregunta,"gemini-3.5-flash-lite",system_instructions, response_schema)
+    url, body= armar_peticion_evaluacion(pregunta,"gemini-3.5-flash",system_instructions, response_schema)
 
     inicio = time.perf_counter() #Empezar el contador
 
@@ -171,6 +178,9 @@ def parsear_respuesta_json(texto, claves_requeridas = None):
 if __name__ == "__main__":
     try:
         for i in range(5):
-            print(obtener_dato_de_prueba("Confirma la conexion"))
+            print(obtener_dato_de_prueba("Calcula cuántas unidades de producto caben en un camión con una rampla de 15.685 mm de largo, 2.507 mm de ancho y 2.599 mm de alto. " \
+            "Cada unidad de producto tiene una altura de 2.494 mm y se transporta sobre un pallet de madera de 1.400 mm de largo por 1.200 mm de ancho. Considera la altura " \
+            "del pallet dentro de la altura total de carga disponible. Determina la cantidad máxima de pallets que se pueden cargar, evaluando las distintas orientaciones " \
+            "posibles para optimizar el espacio, sin superar las dimensiones interiores de la rampla ni asumir que se pueden apilar los productos."))
     except (ValueError, RuntimeError, TimeoutError) as error:
         print(f"No se pudo completar la operación: {error}")

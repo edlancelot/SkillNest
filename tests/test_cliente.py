@@ -1,7 +1,7 @@
 from unittest.mock import patch, Mock
 import pytest
 from src.consumir_gemini import enviar_peticion
-import cliente
+from src import cliente
 
 
 @pytest.fixture(autouse=True)
@@ -45,14 +45,14 @@ def test_con_reintento_agota_intentos():
     def siempre_falla():
         raise TimeoutError("simulado")
 
-    with patch("cliente.time.sleep"):
+    with patch("src.cliente.time.sleep"):
         with pytest.raises(TimeoutError):
             cliente.con_reintento(siempre_falla, intentos=3)
 
 
 def test_con_reintento_no_reintenta_value_error():
     respuesta_falsa = Mock(side_effect=ValueError("credencial inválida"))
-    with patch("cliente.time.sleep") as sleep_falso:
+    with patch("src.cliente.time.sleep") as sleep_falso:
         with pytest.raises(ValueError):
             cliente.con_reintento(respuesta_falsa, intentos=3)
     assert respuesta_falsa.call_count == 1
@@ -69,7 +69,7 @@ def test_con_reintento_espera_entre_intentos():
         return "ok"
 
 
-    with patch("cliente.time.sleep") as mock_sleep:
+    with patch("src.cliente.time.sleep") as mock_sleep:
         resultado = cliente.con_reintento(funcion_que_falla_una_vez)
 
 
@@ -89,6 +89,6 @@ def test_registrar_costo_acumula():
 def test_consultar_modelo_convierte_error():
     error_simulado = TimeoutError("simulado")
 
-    with patch("cliente.con_reintento", side_effect=error_simulado):
+    with patch("src.cliente.con_reintento", side_effect=error_simulado):
         with pytest.raises(RuntimeError):
             cliente.consultar_modelo("pregunta de prueba")

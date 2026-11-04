@@ -1,8 +1,8 @@
-import consumir_gemini
+from src import consumir_gemini
 import time
 import statistics
 
-def evaluar_modelos(pregunta,modelo, precio_entrada, precio_salida):
+def evaluar_modelos(pregunta,modelo,system_instructions, precio_entrada, precio_salida):
     numero_pruebas = 3
     latencia_total = []
     costo_total = []
@@ -10,12 +10,12 @@ def evaluar_modelos(pregunta,modelo, precio_entrada, precio_salida):
     for i in range(numero_pruebas):
         try:
             url, body = consumir_gemini.armar_peticion_evaluacion(
-                pregunta,modelo
+                pregunta,modelo,system_instructions
             )
 
             inicio = time.perf_counter() #Empezar el contador
 
-            datos, seg = consumir_gemini.enviar_peticion(
+            datos = consumir_gemini.enviar_peticion(
                 url, body
             )
 
@@ -66,7 +66,7 @@ modelos = [
         "precio_salida": 0.00000375
     },
     {
-        "modelo": "gemini-3.5-flash-lite",
+        "modelo": "gemini-3.5-flash",
         "precio_entrada": 0.00000030,
         "precio_salida": 0.00000250
     },
@@ -109,10 +109,23 @@ No utilices JSON, listas, encabezados, Markdown ni texto adicional fuera de la r
 """
 resultados = []
 
+
+
+system_instructions="Eres un especialista en logística y optimización de carga de camiones. Tu tarea es calcular la cantidad máxima de pallets que caben dentro de una rampla, " \
+    "considerando sus dimensiones interiores, las dimensiones de los pallets y las restricciones físicas de carga. Todas las medidas deben manejarse en milímetros. " \
+    "Rampla: largo 15685 mm, ancho 2507 mm y alto 2599 mm. Cada pallet tiene una base de 1400 mm de largo por 1200 mm de ancho y contiene un producto de 2494 mm de alto." \
+    "No asumas que la altura del producto incluye el pallet: si no se conoce la altura del pallet, solicita ese dato antes de calcular la capacidad vertical. " \
+    "Evalúa las posibles orientaciones de los pallets en el piso de la rampla, respetando sus dimensiones y sin permitir superposiciones, salientes ni ubicaciones " \
+    "físicamente imposibles. Considera la altura total del producto más el pallet para verificar que la carga quepa bajo el techo. No permitas apilar pallets salvo " \
+    "que el usuario lo autorice expresamente. Entrega la cantidad máxima estimada de pallets, la distribución propuesta a lo largo y ancho de la rampla, los cálculos " \
+    "utilizados y las restricciones detectadas. Distingue entre una estimación geométrica y una distribución físicamente validada. No inventes datos faltantes; " \
+    "solicita aclaraciones cuando sean necesarias."
+
 for modelo in modelos:
     resultado = evaluar_modelos(
         prompt,
         modelo["modelo"],
+        system_instructions,
         modelo["precio_entrada"],
         modelo["precio_salida"]
     )

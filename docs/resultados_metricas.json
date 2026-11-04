@@ -1,0 +1,177 @@
+[
+  {
+    "consulta": "¿Cuánto largo ocupan 11 filas de pallets de 1400 mm?",
+    "respuesta": "Para calcular el largo ocupado por 11 filas, es necesario conocer si los pallets están dispuestos con su lado de 1400 mm o de 1200 mm a lo largo de la rampla, ya que 11 filas de 1400 mm ocuparían exactamente 15400 mm, mientras que 11 filas de 1200 mm ocuparían 13200 mm. Por favor, especifique la orientación deseada de los pallets y proporcione la altura estándar del pallet vacío para validar si la carga total de 2494 mm más la base supera los 2599 mm de altura interior disponibles. Quedo a la espera de estos datos para realizar la distribución físicamente validada y confirmar si el largo de 15400 mm permite maniobras de carga seguras dentro de los 15685 mm de la rampla.",
+    "precision": 0.03225806451612903,
+    "cobertura": 0.8,
+    "f1": 0.06201550387596899
+  },
+  {
+    "consulta": "¿Esta estimación de 22 pallets es una distribución físicamente validada?",
+    "respuesta": "Para validar si los 22 pallets caben, necesito que confirmes la altura del pallet vacío, ya que al sumar los 2494 mm del producto más la altura de la base, el conjunto podría exceder el límite de 2599 mm del techo. Con un ancho de 2507 mm, solo es posible ubicar los pallets con su lado de 1200 mm a lo ancho en una sola fila lateral, permitiendo un máximo de 11 unidades alineadas a lo largo de los 15685 mm si se orientan de forma constante. Una distribución de 22 pallets no es físicamente validada porque requeriría dos filas paralelas que excederían el ancho disponible de 2507 mm o un apilamiento no autorizado.",
+    "precision": 0.043859649122807015,
+    "cobertura": 0.35714285714285715,
+    "f1": 0.078125
+  },
+  {
+    "consulta": "¿Cuál es el peso máximo que soporta la rampla?",
+    "respuesta": "Como especialista en optimización de carga, debo informarle que no cuento con la información técnica sobre la capacidad de carga máxima en peso o los ejes de la rampla, por lo que le solicito proporcionarme la ficha técnica del fabricante para proceder con dicho cálculo. Asimismo, para finalizar el cálculo de capacidad volumétrica, requiero que me confirme la altura del pallet vacío, ya que la altura total de la unidad de carga es indispensable para validar si es posible apilar o si la altura actual excede el límite vertical de 2599 mm. Quedo a la espera de estos datos para completar el análisis de distribución física y determinar cuántas unidades puede transportar con seguridad.",
+    "precision": 0.05263157894736842,
+    "cobertura": 0.35294117647058826,
+    "f1": 0.09160305343511449
+  },
+  {
+    "consulta": "¿Cuántos pallets caben a lo ancho si el lado de 1400 mm va atravesado?",
+    "respuesta": "Para calcular la capacidad a lo ancho, es necesario conocer la altura del pallet, ya que actualmente la altura total de 2494 mm sumada a la base del pallet podría exceder el límite de 2599 mm de la rampla, además de que el ancho de 2507 mm solo permite ubicar un pallet de 1400 mm de forma transversal, dejando 1107 mm de espacio libre insuficiente para una segunda unidad. Sin conocer la altura del pallet para validar la restricción vertical, confirmo que solo es posible colocar una fila de pallets a lo ancho, lo que permitiría ubicar un máximo de 11 pallets en una sola hilera a lo largo de la rampla. Por favor, proporcione la altura del pallet para verificar si la carga cumple con la altura máxima permitida antes de confirmar la viabilidad total de esta configuración.",
+    "precision": 0.06474820143884892,
+    "cobertura": 0.6,
+    "f1": 0.11688311688311687
+  },
+  {
+    "consulta": "Con pallets de 100 mm de alto, ¿caben 20 pallets?",
+    "respuesta": "Para calcular la capacidad total, primero es necesario confirmar si la altura del producto de 2494 mm incluye el pallet de 100 mm, ya que actualmente la altura total de 2594 mm es extremadamente ajustada para el límite de 2599 mm de la rampla. Bajo la configuración de una sola capa, la distribución física permite colocar máximo 20 pallets orientando el lado de 1200 mm a lo ancho de la rampla (dos filas de 10 pallets cada una ocupando 14000 mm de largo y 2400 mm de ancho), lo cual es factible siempre que la altura total de 2594 mm sea correcta y la carga no presente deformaciones. Por favor, confirme si la altura de 2494 mm del producto ya integra el pallet para validar definitivamente la viabilidad técnica de esta carga.",
+    "precision": 0.06818181818181818,
+    "cobertura": 0.5625,
+    "f1": 0.12162162162162161
+  },
+  {
+    "consulta": "¿Cuántos pallets caben en la rampla?",
+    "respuesta": "Para calcular la capacidad exacta, necesito que me proporciones la altura del pallet (la estructura de madera o plástico), ya que actualmente solo cuento con la altura del producto (2494 mm) y la altura interna de la rampla (2599 mm) es muy ajustada. Con las dimensiones actuales, solo puedo confirmar que caben 18 pallets en una sola fila de 9 columnas si orientas el lado de 1400 mm a lo largo de la rampla (12600 mm en total) y el lado de 1200 mm a lo ancho, pero esta configuración debe validarse una vez confirmada la altura total para descartar problemas de estiba. Por favor, especifica el espesor del pallet para verificar si el conjunto excede los 2599 mm disponibles y determinar si la carga es viable.",
+    "precision": 0.07086614173228346,
+    "cobertura": 0.5625,
+    "f1": 0.1258741258741259
+  },
+  {
+    "consulta": "Con pallets de 100 mm de alto, ¿caben 24 pallets?",
+    "respuesta": "Considerando que la altura total de cada unidad es de 2594 mm, que supera los 2599 mm disponibles de la rampla, la carga es inviable debido al margen de maniobra insuficiente para ingresar la mercancía bajo el techo. Con una superficie de carga de 15685x2507 mm y pallets de 1400x1200 mm, una disposición óptima permite un máximo de 22 unidades en una sola fila doble, imposibilitando físicamente el alojamiento de 24 pallets. Para una evaluación definitiva, confirme si la altura de 2594 mm es estrictamente rígida o si existe tolerancia para el despeje superior durante la carga.",
+    "precision": 0.07216494845360824,
+    "cobertura": 0.7,
+    "f1": 0.1308411214953271
+  },
+  {
+    "consulta": "¿Es posible cargar 23 pallets si el límite por área es 23?",
+    "respuesta": "Para determinar si la carga de 23 unidades es factible, necesito que me confirmes la altura específica del pallet de madera para verificar si la altura total combinada supera los 2599 mm de la rampla, ya que actualmente solo cuento con la altura del producto. Bajo una distribución geométrica simple, dos filas de pallets orientadas con su lado de 1200 mm a lo ancho ocupan 2400 mm de los 2507 mm disponibles, permitiendo colocar hasta 11 filas de pallets a lo largo, lo que limita la capacidad física a 22 unidades sin considerar maniobras de carga. Por lo tanto, con la configuración actual, no es posible cargar 23 pallets al exceder la longitud total permitida de 15685 mm.",
+    "precision": 0.07627118644067797,
+    "cobertura": 0.6,
+    "f1": 0.13533834586466165
+  },
+  {
+    "consulta": "¿Cuántas filas caben a lo largo si el pallet va con 1400 mm en el sentido del largo?",
+    "respuesta": "Para realizar el cálculo preciso de la capacidad vertical, necesito que me proporciones la altura específica del pallet de madera, ya que actualmente solo cuento con la altura del producto. Considerando únicamente el plano horizontal de la rampla de 15685 mm de largo por 2507 mm de ancho, al orientar el lado de 1400 mm del pallet a lo largo, puedes acomodar un máximo de 11 filas (15400 mm totales) y una sola columna de ancho, sumando un total de 11 pallets. Esta distribución es físicamente validada, ya que al utilizar los 1200 mm restantes del ancho del pallet, no es posible añadir una segunda fila longitudinal debido a que el ancho de la rampla de 2507 mm resulta insuficiente para dos pallets de 1200 mm colocados lado a lado (2400 mm), dejando un margen operativo mínimo de 107 mm.",
+    "precision": 0.07857142857142857,
+    "cobertura": 0.8461538461538461,
+    "f1": 0.1437908496732026
+  },
+  {
+    "consulta": "¿Se pueden apilar dos pallets con producto de 2494 mm?",
+    "respuesta": "No es posible apilar dos pallets, ya que la suma de las alturas superaría los 4988 mm, excediendo significativamente el límite de 2599 mm de la rampla, y además necesito que me confirmes la altura específica del pallet vacío para validar si un solo nivel de carga es viable bajo el techo. Con una base de 1400x1200 mm, solo es posible cargar 22 pallets en una única capa mediante una disposición lineal de 11 filas de dos unidades, ocupando 15400 mm de largo y 2400 mm de ancho. Quedo a la espera de la altura del pallet para confirmar si la altura total es inferior a 2599 mm y validar esta configuración como físicamente posible.",
+    "precision": 0.09565217391304348,
+    "cobertura": 0.55,
+    "f1": 0.16296296296296295
+  },
+  {
+    "consulta": "¿Cuál es la altura máxima de pallet permitida?",
+    "respuesta": "La altura máxima permitida para el conjunto de pallet y producto es de 2599 mm, por lo que necesito que me proporciones la altura específica de la base de madera (el pallet) para determinar cuánto espacio real queda disponible para tu carga. Una vez que me confirmes ese dato, podré calcular la capacidad máxima y validar si la distribución geométrica es viable bajo las restricciones de altura de la rampla. Quedo a la espera de la altura del pallet para proceder con el cálculo preciso de la configuración de carga.",
+    "precision": 0.1,
+    "cobertura": 0.5294117647058824,
+    "f1": 0.16822429906542058
+  },
+  {
+    "consulta": "¿Cuántos pallets caben en una fila a lo ancho?",
+    "respuesta": "Para determinar cuántos pallets caben a lo ancho, debo aclarar que con un ancho de 2507 mm y pallets de 1200 mm o 1400 mm de base, solo es posible ubicar dos pallets en paralelo si se orientan con su lado de 1200 mm hacia el ancho de la rampla, sumando 2400 mm y dejando un margen de seguridad de 107 mm. Por favor, especifique la altura de sus pallets para validar si la carga total cumple con el límite de 2599 mm del techo, ya que actualmente solo cuento con la altura del producto. Sin esta medida, no puedo asegurar si la carga es viable ni proceder con el cálculo total de la rampla.",
+    "precision": 0.09565217391304348,
+    "cobertura": 0.7333333333333333,
+    "f1": 0.16923076923076924
+  },
+  {
+    "consulta": "¿Cuánto ancho sobra con dos pallets de 1200 mm de ancho en la rampla?",
+    "respuesta": "Al considerar dos pallets de 1200 mm de ancho colocados lado a lado, el ancho total ocupado es de 2400 mm, lo que deja un espacio sobrante de 107 mm dentro del ancho interior de 2507 mm de la rampla. Antes de confirmar la capacidad total de carga, requiero que me proporciones la altura específica del pallet estándar, ya que actualmente solo cuento con la altura del producto (2494 mm) y esta cifra supera el límite de 2599 mm de la rampla si se suma cualquier altura de pallet convencional. Por favor, confirma la altura del pallet para validar si la carga es físicamente viable bajo el techo de la rampla.",
+    "precision": 0.0990990990990991,
+    "cobertura": 0.7857142857142857,
+    "f1": 0.17600000000000002
+  },
+  {
+    "consulta": "¿Cuántos pallets hay en 5 filas de 2 pallets?",
+    "respuesta": "Si dispone de 5 filas con 2 pallets cada una, usted cuenta con un total de 10 pallets, pero para confirmar si caben en su rampla requiero que me informe la altura específica del pallet de madera, ya que actualmente su producto de 2494 mm junto con un pallet estándar excedería la altura interior de 2599 mm. Por favor proporcione la altura del pallet para validar si la configuración de 10 unidades es físicamente posible bajo el techo de la rampla.",
+    "precision": 0.09876543209876543,
+    "cobertura": 0.8888888888888888,
+    "f1": 0.17777777777777778
+  },
+  {
+    "consulta": "¿Qué porcentaje del piso ocupan 22 pallets?",
+    "respuesta": "Para calcular el porcentaje de ocupación, primero debo confirmar la altura del pallet, ya que el producto de 2494 mm sumado a la base podría exceder los 2599 mm de la rampla, invalidando cualquier distribución. Con los datos actuales, 22 pallets de 1400x1200 mm ocupan un área total de 36.96 metros cuadrados, lo que representa aproximadamente un 93.9% de los 39.32 metros cuadrados disponibles en el piso de la rampla. Por favor, indique la altura del pallet para validar si esta cantidad es físicamente posible bajo el techo o si debemos descartarla por restricción de gálibo.",
+    "precision": 0.10416666666666667,
+    "cobertura": 0.6666666666666666,
+    "f1": 0.1801801801801802
+  },
+  {
+    "consulta": "¿Cuánto largo sobra con 11 filas de pallets de 1400 mm?",
+    "respuesta": "Para 11 filas de pallets dispuestos con su lado de 1400 mm a lo largo de la rampla, se utilizan 15400 mm de los 15685 mm disponibles, resultando en un sobrante de 285 mm. Dado que no se ha especificado la altura del pallet, necesito que me proporciones este dato para validar si la altura total de 2494 mm más el pallet supera el límite de 2599 mm del techo. Confírmame también si deseas mantener la orientación de 1200 mm de ancho, la cual permitiría colocar dos pallets por fila al sumar 2400 mm de ancho total dentro de los 2507 mm de la rampla.",
+    "precision": 0.10476190476190476,
+    "cobertura": 0.7857142857142857,
+    "f1": 0.18487394957983194
+  },
+  {
+    "consulta": "¿Cuál es el área del piso de la rampla y cuántos pallets da como límite teórico?",
+    "respuesta": "El área total del piso de la rampla es de 39,324.3 metros cuadrados, calculados al multiplicar su largo de 15,685 mm por su ancho de 2,507 mm. Considerando únicamente el límite teórico geométrico basado en una huella de 1.68 metros cuadrados por pallet, caben un máximo de 23 unidades sin considerar las restricciones de maniobra ni las dimensiones de la rampla. Para validar esta capacidad, requiero que me proporciones la altura específica del pallet de madera o plástico para verificar si la altura total de la carga supera los 2,599 mm disponibles.",
+    "precision": 0.11956521739130435,
+    "cobertura": 0.5238095238095238,
+    "f1": 0.19469026548672566
+  },
+  {
+    "consulta": "¿Cabe el producto de 2494 mm de alto en la rampla sin considerar el pallet?",
+    "respuesta": "Para confirmar si el producto de 2494 mm de alto cabe en la rampla, necesito que me proporciones la altura exacta del pallet, ya que la suma de ambos debe ser menor o igual a los 2599 mm de altura interior disponibles. Una vez que disponga de esa medida, podré determinar si la altura total cumple con las restricciones de espacio vertical o si la carga es físicamente inviable. Por favor, especifica el espesor del pallet para proceder con el cálculo técnico de la altura y la optimización de la distribución en planta.",
+    "precision": 0.11827956989247312,
+    "cobertura": 0.6470588235294118,
+    "f1": 0.2
+  },
+  {
+    "consulta": "Autorizo apilar. Cada pallet mide 100 mm de alto. ¿Se puede poner una segunda capa?",
+    "respuesta": "Considerando que cada pallet mide 100 mm de alto y su carga 2494 mm, la altura total por unidad es de 2594 mm, lo que permite una única capa dentro de la altura disponible de 2599 mm, haciendo imposible el apilamiento de una segunda unidad. Con los pallets orientados con el lado de 1200 mm a lo ancho, puedes colocar 11 filas de pallets (13200 mm de largo) dejando espacio sobrante, lo que resulta en una capacidad total validada de 11 pallets distribuidos longitudinalmente. Por favor, confirma si deseas evaluar una orientación distinta para intentar optimizar mejor el espacio restante de 2485 mm en el largo de la rampla.",
+    "precision": 0.12844036697247707,
+    "cobertura": 0.7,
+    "f1": 0.2170542635658915
+  },
+  {
+    "consulta": "Con pallets de 100 mm de alto, ¿cuánta altura libre queda bajo el techo?",
+    "respuesta": "Considerando que el pallet mide 100 mm y el producto 2494 mm, la altura total de carga es de 2594 mm, lo que deja una luz libre de 5 mm respecto a los 2599 mm de altura interior de la rampla. Con esta configuración, el espacio es suficiente para una sola altura, por lo que procederé a calcular la distribución horizontal máxima si confirmas que no se requiere margen adicional para maniobras de carga. Por favor, especifica si deseas que proceda con el cálculo de distribución en planta basándome en los 15685 mm de largo y 2507 mm de ancho disponibles.",
+    "precision": 0.12871287128712872,
+    "cobertura": 0.7647058823529411,
+    "f1": 0.22033898305084745
+  },
+  {
+    "consulta": "Con pallets de 100 mm, ¿cuál es la altura total de pallet más producto?",
+    "respuesta": "La altura total de cada unidad es de 2594 mm al sumar los 100 mm del pallet a los 2494 mm del producto, lo cual permite que quepan bajo el techo de 2599 mm con apenas 5 mm de holgura. Para completar el cálculo de la capacidad máxima de la rampla, necesito que confirmes si los pallets deben cargarse con una orientación específica o si puedo combinarlas para optimizar el espacio interior de 15685 mm de largo por 2507 mm de ancho. Una vez confirmada la disposición, procederé a determinar cuántas unidades caben sin superar los límites físicos de la estructura.",
+    "precision": 0.12871287128712872,
+    "cobertura": 0.8666666666666667,
+    "f1": 0.22413793103448276
+  },
+  {
+    "consulta": "¿Cuántos pallets caben si se orientan con 1200 mm en el sentido del largo, sin apilar?",
+    "respuesta": "Para realizar el cálculo exacto, es imprescindible conocer la altura específica del pallet de madera o plástico, ya que al sumar esta medida a los 2494 mm del producto podría excederse el límite de 2599 mm de altura interior. Considerando la orientación solicitada, en el ancho de 2507 mm caben dos filas de 1200 mm (total 2400 mm) y en el largo de 15685 mm caben 11 columnas de 1400 mm (total 15400 mm), lo que resulta en una capacidad física de 22 pallets sin apilar. Por favor, proporcione la altura del pallet para confirmar si la carga es viable bajo el techo antes de proceder con una validación final.",
+    "precision": 0.15454545454545454,
+    "cobertura": 0.6538461538461539,
+    "f1": 0.25
+  },
+  {
+    "consulta": "Cada pallet mide 150 mm de alto. ¿Cuántos pallets caben en la rampla?",
+    "respuesta": "Considerando que la altura total de cada unidad es de 2644 mm (2494 mm de producto más 150 mm de pallet), la carga supera la altura interior de 2599 mm de la rampla, por lo que es imposible cargar cualquier pallet en estas condiciones. Le recomiendo verificar las dimensiones de los productos o la altura de la rampla, ya que actualmente no es posible realizar una distribución válida sin exceder el techo. Sin la posibilidad de apilado y ante la incompatibilidad de altura, la capacidad máxima resultante es de cero unidades.",
+    "precision": 0.17582417582417584,
+    "cobertura": 0.8421052631578947,
+    "f1": 0.2909090909090909
+  },
+  {
+    "consulta": "Cada pallet mide 120 mm de alto. ¿Caben bajo el techo?",
+    "respuesta": "La altura total de cada unidad es de 2614 mm (2494 mm de producto más 120 mm de pallet), por lo que exceden la altura interior de la rampla de 2599 mm y no caben bajo el techo. Como la altura total supera el límite permitido, es imposible realizar una distribución física o geométrica válida bajo las condiciones actuales. Por favor, confirme si existe la posibilidad de retirar el producto del pallet o utilizar pallets de menor altura para intentar una nueva configuración.",
+    "precision": 0.18072289156626506,
+    "cobertura": 0.7894736842105263,
+    "f1": 0.29411764705882354
+  },
+  {
+    "consulta": "Cada pallet mide 100 mm de alto. ¿Cuántos pallets caben en la rampla sin apilar?",
+    "respuesta": "Considerando que la altura total de cada unidad es de 2594 mm (2494 mm de producto más 100 mm de pallet), la carga cabe físicamente bajo el techo de 2599 mm, pero debido a que el ancho de la rampla es de 2507 mm y el largo de 15685 mm, solo es posible acomodar una fila longitudinal de pallets sin importar si los orienta a 1400x1200 mm o 1200x1400 mm. Bajo esta restricción de ancho, caben un máximo de 11 pallets si se orientan con su lado de 1400 mm a lo largo (15400 mm ocupados) o 13 pallets si se orientan con su lado de 1200 mm a lo largo (15600 mm ocupados), siendo esta última la distribución óptima validada.",
+    "precision": 0.21487603305785125,
+    "cobertura": 0.896551724137931,
+    "f1": 0.3466666666666667
+  }
+]

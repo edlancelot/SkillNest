@@ -1,7 +1,7 @@
 import json
 import time
-from prompts.banco import BANCO_DE_PROMPTS
-from consumir_gemini import armar_peticion_evaluacion, enviar_peticion, extraer_datos, parsear_respuesta_json
+from src.prompts.banco import BANCO_DE_PROMPTS
+from src.consumir_gemini import armar_peticion_evaluacion, enviar_peticion, extraer_datos, parsear_respuesta_json
 
 registro = {}
 
