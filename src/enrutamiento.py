@@ -1,92 +1,176 @@
+import logging
+
 from dotenv import load_dotenv
-
-from langchain_google_genai import ChatGoogleGenerativeAI #modelo
-from langchain_core.prompts import  PromptTemplate #Plantilla -> Prompt dinámico
-from langchain_core.output_parsers import StrOutputParser #Parsea la respuesta y la transforma en solo textos
-from langchain_core.runnables import (RunnableBranch, RunnablePassthrough) #Bifurcaciones/Ramificaciones
-
-load_dotenv()
-
-modelo = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
-
-plantilla_clasificacion = PromptTemplate.from_template(
-    "Clasifica el siguiente mensaje de soporte en una sola palabra:"
-    "pregunta, queja o sugerencia. Responde solo con esa palabra. \n\n {mensaje}"
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import (
+    RunnableBranch,
+    RunnablePassthrough,
+    RunnableLambda,
 )
 
-paso_clasificacion = (
-    plantilla_clasificacion
-    | modelo
-    | StrOutputParser()
-    | (lambda texto: texto.strip().lower())
-)
 
-# mensaje_prueba = "Dame el nombre de tu creador."
+# Identifica los registros generados por este módulo.
+logger = logging.getLogger(__name__)
 
-# clasificacion = paso_clasificacion.invoke(
-#     {"mensaje": mensaje_prueba}
-# )
 
-# print(clasificacion)
+def construir_paso_clasificacion(modelo):
+    # Recibimos el modelo para poder reemplazarlo durante las pruebas.
+    plantilla = PromptTemplate.from_template(
+        "Clasifica el siguiente mensaje de soporte en una sola palabra: "
+        "pregunta, queja o sugerencia. Responde solo con esa palabra.\n\n"
+        "{mensaje}"
+    )
 
-cadena_pregunta = (
-    PromptTemplate.from_template("Responde esta pregunta técnica con precisión: \n\n {mensaje}")
-    | modelo
-    | StrOutputParser()
-)
+    return (
+        plantilla
+        | modelo
+        | StrOutputParser()
+        # Quita espacios, convierte a minúsculas y elimina puntos finales.
+        | (lambda texto: texto.strip().lower().rstrip(".").strip())
+    )
 
-cadena_queja = (
-    PromptTemplate.from_template("Responde esta queja con empatia, reconociendo el problema antes de ofrecer una solución: \n\n {mensaje}")
-    | modelo
-    | StrOutputParser()
-)
 
-cadena_sugerencia = (
-    PromptTemplate.from_template("Agradece esta sugerencia y explica cómo se evaluara dentro del producto: \n\n {mensaje}")
-    | modelo
-    |StrOutputParser()
-)
+def construir_cadena_con_enrutamiento(
+    paso_clasificacion,
+    cadena_queja=None,
+    cadena_sugerencia=None,
+    cadena_pregunta=None,
+):
+    # Si una prueba omite una ruta, esa ruta simplemente deja pasar los datos.
+    cadena_queja = cadena_queja or RunnablePassthrough()
+    cadena_sugerencia = cadena_sugerencia or RunnablePassthrough()
+    cadena_pregunta = cadena_pregunta or RunnablePassthrough()
 
-# Sintaxis RunnableBranch
-# caminos = RunnableBranch(
-#     {condicion_1, rama_1}, #if
-#     {condicion_2, rama_2}, #elseif
-#     {condicion_3, rama_3}, #elseif
-#     rama_por_defecto #else
-# ) #Cada condicion debe ser una función: sele ser un lambda
+    bifurcacion = RunnableBranch(
+        # Cada condición recibe el diccionario completo.
+        (lambda datos: datos["categoria"] == "queja", cadena_queja),
+        (lambda datos: datos["categoria"] == "sugerencia", cadena_sugerencia),
 
-# = {"clasificacion": "queja", "mensaje": "Mi teléfono no funciona."}
-bifurcacion = RunnableBranch(
-    (lambda x: x["clasificacion"] == "queja", cadena_queja), #if x["clasificacion"] == "queja" -> cadena_queja
-    (lambda x: x["clasificacion"] == "sugerencia", cadena_sugerencia), #elseif x["clasificacion"] == "sugerencia": cadena_sugerencia
-    cadena_pregunta #else: cadena_pregunta
-)
+        # Se ejecuta si ninguna condición anterior coincide.
+        cadena_pregunta,
+    )
 
-#cadena_con_enrutamiento, RunnablePAssthrough
-cadena_con_enrutamiento = (
-    #Ejecutar paso_clasificacion, obtener la respuesta como clasificacion y tambien conservar el mensaje original
-    RunnablePassthrough.assign(clasificacion=paso_clasificacion) #{"mensaje": "Deberian tener mas agentes disponibles."}
-    #"clasificacion":resultado de paso_clasificacion}
-    | bifurcacion
-)
+    return (
+        # Conserva mensaje y agrega la categoría calculada.
+        RunnablePassthrough.assign(categoria=paso_clasificacion)
+        | bifurcacion
+    )
 
-resultado = cadena_con_enrutamiento.invoke(
-    {"mensaje": "Deberia de tener mas agentes disponibles."}
-)
 
-print(resultado)
+def fallback_con_log(datos):
+    # Registra la excepción que provocó el uso del fallback.
+    logger.warning(
+        "Fallo la ruta de queja; se ejecuta el fallback: %s",
+        datos.get("error"),
+    )
 
-# Entrada inicial: {"mensaje":"Deberia de tener mas agentes disponibles." }
-#-------------------------
-#-------------------------
-# RunnablePassthrough
-#   1: Pasa el mensaje a paso clasificacion -> return "sugerencia o queja o pregunta"
-#   2: Fusiono clasificacion y mensaje
-#   3: return {"mensaje":"Deberia de tener mas agentes disponibles.","clasificacion": "sugerencia, queja o pregunta"}
-#-------------------------
-#-------------------------
-# bifurcacion(RunnableBlanch)
-#   ¿clasificacion == "queja"? NO
-#   ¿clasificacion == "sugerencia" SI
-#       Entra a la cadena_sugerencia
-#       cadena_sugerencia.invoqke({"mensaje":"Deberia de tener mas agentes disponibles.","clasificacion": "sugerencia, queja o pregunta")
+    return (
+        "Gracias por tu mensaje. Lo hemos recibido y estamos "
+        "trabajando en ello. Te responderemos lo antes posible."
+    )
+
+
+# Convierte la función de Python en una pieza ejecutable de LangChain.
+respuesta_generica = RunnableLambda(fallback_con_log)
+
+
+def construir_cadena_queja_segura(cadena_queja):
+    return cadena_queja.with_fallbacks(
+        # Alternativa que se ejecutará si falla la cadena de quejas.
+        [respuesta_generica],
+
+        # Entrega la excepción al fallback bajo la clave "error".
+        exception_key="error",
+    )
+
+
+def construir_flujo(modelo):
+    # Construye el clasificador con el modelo recibido.
+    paso_clasificacion = construir_paso_clasificacion(modelo)
+
+    cadena_pregunta = (
+        PromptTemplate.from_template(
+            "Eres especialista en logistica de carga. Responde esta pregunta "
+            "con precision, en un solo parrafo. Usa milimetros, no apiles "
+            "pallets salvo que se autorice y no inventes datos.\n\n{mensaje}"
+        )
+        | modelo
+        | StrOutputParser()
+    )
+
+    cadena_queja = (
+        PromptTemplate.from_template(
+            "Responde esta queja con empatia, reconociendo el problema "
+            "antes de ofrecer una solucion, en un solo parrafo:\n\n{mensaje}"
+        )
+        | modelo
+        | StrOutputParser()
+    )
+
+    cadena_sugerencia = (
+        PromptTemplate.from_template(
+            "Responde a esta sugerencia con gratitud y consideracion, "
+            "en un solo parrafo:\n\n{mensaje}"
+        )
+        | modelo
+        | StrOutputParser()
+    )
+
+    # Protege la ruta de quejas antes de conectarla al enrutador.
+    cadena_queja_segura = construir_cadena_queja_segura(cadena_queja)
+
+    # Devuelve un único flujo con todas sus conexiones.
+    return construir_cadena_con_enrutamiento(
+        paso_clasificacion=paso_clasificacion,
+        cadena_queja=cadena_queja_segura,
+        cadena_sugerencia=cadena_sugerencia,
+        cadena_pregunta=cadena_pregunta,
+    )
+
+
+def procesar_mensaje_seguro(cadena, mensaje):
+    try:
+        # Ejecuta el flujo completo con el mensaje recibido.
+        return cadena.invoke({"mensaje": mensaje})
+
+    except Exception as error:
+        # Captura y registra fallos que no resolvió el fallback.
+        logger.error("Error al procesar el mensaje: %s", error)
+
+        return (
+            "no pudimos procesar tu mensaje. "
+            "Por favor, intenta de nuevo mas tarde."
+        )
+
+
+if __name__ == "__main__":
+    # Configura los registros solamente al ejecutar este módulo.
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        filename="errores.log",
+        filemode="a",
+        encoding="utf-8",
+    )
+
+    # Carga las variables de entorno y prepara el modelo.
+    load_dotenv()
+    modelo = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
+
+    # Construye el flujo, incluyendo el fallback de quejas.
+    cadena_con_enrutamiento = construir_flujo(modelo)
+
+    mensaje = (
+        "¿Cuántos pallets de 1400 x 1200 mm caben en una rampla de "
+        "15685 x 2507 x 2599 mm, sin apilar?"
+    )
+
+    # Ejecuta el flujo bajo la protección general del try/except.
+    resultado = procesar_mensaje_seguro(
+        cadena_con_enrutamiento,
+        mensaje,
+    )
+
+    print(resultado)
